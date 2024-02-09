@@ -81,7 +81,6 @@ function igS(username) {
   });
 }
 
-const zu = "https://www.instagram.com/p/CP9pXGqhPny/?igsh=b3FqYWJ4Z3lhbWth";
-
-// Contoh penggunaan fungsi dengan nilai 'q'
-getInsta(zu);
+module.exports = {
+  ig, igS
+};
