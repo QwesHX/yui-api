@@ -82,5 +82,6 @@ function igS(username) {
 }
 
 module.exports = {
-  ig, igS
+  ig,
+  igS
 };
