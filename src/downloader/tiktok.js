@@ -1,24 +1,43 @@
 const got = require('got');
+const cheerio = require('cheerio');
 
 function tt(url) {
-	return new Promise(async(resolve, reject) => {
-		let getUrl = await got(url)
-		let videoKey = await got(`https://api.snaptik.site/video-key?video_url=${getUrl.url}`).json()
-		let metaData = await got(`https://api.snaptik.site/video-details-by-key?key=${videoKey.data.key}`).json()
-		resolve({
-			author: metaData.data.author,
-			description: metaData.data.description,
-			video: {
-				with_watermark: `https://api.snaptik.site/download?key=${metaData.data.video.with_watermark}&type=video`,
-				no_watermark: `https://api.snaptik.site/download?key=${metaData.data.video.no_watermark}&type=video`,
-				no_watermark_raw: metaData.data.video.no_watermark_raw,
-			},
-			music: `https://api.snaptik.site/download?key=${metaData.data.music}&type=music`
-		})
-	})
-}
+  const requestData = {
+    q: url,
+    lang: 'id',
+  };
 
+  const config = {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'Accept': '*/*',
+      'X-Requested-With': 'XMLHttpRequest',
+      'User-Agent': 'Mozilla/5.0 (Linux; Android 12) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.98 Mobile Safari/537.36',
+    }
+  };
+
+  return new Promise((resolve, reject) => {
+    got.post('https://tikdownloader.io/api/ajaxSearch', {
+      form: requestData,
+      headers: config.headers,
+    }).then(response => {
+      const x = JSON.parse(response.body).data;
+      const $ = cheerio.load(x);
+      const filter = $('.tik-right .dl-action');
+      const mp4_1 = filter.find('p:eq(0) a').attr('href');
+      const mp4_2 = filter.find('p:eq(1) a').attr('href');
+      const HD = filter.find('p:eq(2) a').attr('href');
+      const music = filter.find('p:eq(3) a').attr('href');
+      console.log({ mp4_1, mp4_2, HD, music });
+      resolve({ mp4_1, mp4_2, HD, music });
+    }).catch(error => {
+      console.error(error);
+      reject(error);
+    });
+  });
+}
 
 module.exports = {
-	tt
-}
+  tt // export the function with the new name
+};
+	      
