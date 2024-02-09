@@ -1,7 +1,7 @@
 const got = require('got');
 const cheerio = require('cheerio');
 
-function getInsta(q) {
+function ig(url) {
   const requestData = {
     q: q,
     // lain sesuai kebutuhan
@@ -37,7 +37,7 @@ function getInsta(q) {
   });
 }
 
-function getInstaStory(q) {
+function igS(username) {
   const requestData = {
     q: `https://www.instagram.com/stories/${q}`, // sesuaikan dengan kebutuhan
   };
